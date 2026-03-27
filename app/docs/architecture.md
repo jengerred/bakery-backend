@@ -37,11 +37,11 @@ Each module is isolated but shares a common architecture and data model.
 │ Next.js/TS   │      │ Next.js/TS     │       │ Next.js/TS       │
 └──────────────┘      └────────────────┘       └──────────────────┘
         │                       │                        │
-        └──────────────┬────────┴──────────────┬────────┘
+        └──────────────┬────────┴──────────────┬─────────┘
                        ▼                       ▼
               ┌────────────────┐      ┌──────────────────┐
               │  API Layer     │      │  Realtime Events │
-              │   C# / .NET    │      │   Webhooks/WS     
+              │   C# / .NET    │      │   Webhooks/WS    │ 
               └────────────────┘      └──────────────────┘
                        │
                        ▼

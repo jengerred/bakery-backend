@@ -2,7 +2,7 @@
 ---
 
 # 📄 **`pos-overview.md`**
-```markdown
+
 # 🍞 POS System — Overview
 
 The POS is the first completed module of the Bakery Business Suite.  

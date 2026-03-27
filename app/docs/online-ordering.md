@@ -2,7 +2,7 @@
 ---
 
 # 📄 **`online-ordering.md`**
-```markdown
+
 # 🌐 Online Ordering — Overview
 
 The online ordering site is the customer‑facing module of the Bakery Business Suite.
@@ -24,3 +24,19 @@ The online ordering site is the customer‑facing module of the Bakery Business 
 
 ## ⭐ Folder Structure (Draft)
 
+/app/online
+/login
+/signup
+/menu
+/cart
+/checkout
+/orders
+
+
+---
+
+## ⭐ Future Enhancements
+
+- Stripe online payments
+- Real‑time order status
+- Push notifications
