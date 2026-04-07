@@ -23,13 +23,16 @@ export default function ShopProductCard({
   const savings = Math.round((1 - (dozenProduct.price / (singleProduct.price * 12))) * 100);
 
   return (
-    <div className="group relative flex flex-col bg-violet-300/60 border-2 border-violet-400 rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-violet-600 hover:bg-violet-100/50 hover:shadow-[0_0_40px_8px_rgba(167,139,250,0.6)]">
+    <div className="group relative flex flex-col bg-violet-400/50 border-2 border-violet-400 rounded-[2rem] overflow-hidden transition-all duration-500 
+    hover:border-violet-600 hover:bg-violet-100/50 hover:shadow-[0_0_40px_8px_rgba(167,139,250,0.6)]">
       
       {/* 🖼️ IMAGE SECTION */}
       <div className="h-50 relative flex items-center justify-center text-5xl group-hover:bg-violet-300 transition-colors duration-500">
-        <span className="filter drop-shadow-md group-hover:scale-110 transition-transform duration-500">
-          {isCookie ? "🍪" : "🍫"}
-        </span>
+          <img
+    src="/chocChip.png"
+    alt={`${flavorName} image`}
+    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+  />
 
         {isDozen && (
           <div className="absolute top-2 right-3 bg-violet-600 text-white text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-[0.2em] shadow-lg animate-in zoom-in">

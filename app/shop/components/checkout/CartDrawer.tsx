@@ -13,7 +13,9 @@ export default function CartDrawer({
   onClose, 
   cart, 
   onIncrement, 
-  onDecrement 
+  onDecrement,
+  onUpdateQuantity, 
+  onRemove,
 }: any) {
   const [view, setView] = useState<"methods" | "details" | "payment" | "success">("methods");
   const [method, setMethod] = useState<"pickup" | "shipping">("pickup");
@@ -25,6 +27,7 @@ export default function CartDrawer({
   const shippingFee = method === "shipping" ? 12.00 : 0;
   const finalTotal = subtotal + shippingFee;
 
+  
   const handleToggleMethod = () => {
     setMethod(prev => prev === 'pickup' ? 'shipping' : 'pickup');
     if (view === "payment") setView("details");
@@ -47,7 +50,7 @@ export default function CartDrawer({
       setShowErrors(true);
     }
   };
-
+  
   const inputClass = (value: string) => `
     w-full p-4 bg-stone-50 rounded-xl border-2 font-bold text-sm transition-all outline-none
     ${showErrors && value.trim() === "" 
@@ -82,20 +85,20 @@ export default function CartDrawer({
         {/* HEADER */}
         <div className="px-8 pt-8 pb-6 border-b border-stone-100 relative shrink-0 text-center">
           {view !== "success" && (
-  <div className="p-3 bg-violet-100/50 rounded-3xl border-2 border-violet-600 text-center w-50 hover:bg-violet-200">
-    <button
-      onClick={() => {
-        setView("methods");
-        setShowErrors(false);
-        onClose();
-      }}
-      className="p-1 absolute top-8 left-8 text-[10px] font-black uppercase tracking-[0.15em] text-violet-600 hover:text-violet-800 transition-all flex items-center gap-2 group"
-    >
-      <span className="pl-2 mb-1 text-sm group-hover:-translate-x-1 transition-transform">←</span>
-      Continue Shopping
-    </button>
-  </div>
-)}
+            <div className="p-3 bg-violet-100/50 rounded-3xl border-2 border-violet-600 text-center w-50 hover:bg-violet-200">
+              <button
+                onClick={() => {
+                  setView("methods");
+                  setShowErrors(false);
+                  onClose();
+                }}
+                className="p-1 absolute top-8 left-8 text-[10px] font-black uppercase tracking-[0.15em] text-violet-600 hover:text-violet-800 transition-all flex items-center gap-2 group"
+              >
+                <span className="pl-2 mb-1 text-sm group-hover:-translate-x-1 transition-transform">←</span>
+                Continue Shopping
+              </button>
+            </div>
+          )}
 
           
           <h1 className="text-sm font-bold text-stone-900 leading-tight mt-6">
@@ -118,6 +121,8 @@ export default function CartDrawer({
                 finalTotal={subtotal} 
                 onIncrement={onIncrement}
                 onDecrement={onDecrement}
+                onUpdateQuantity={onUpdateQuantity}
+                onRemove={onRemove}
               />
               <div className="space-y-3">
                 <div className="p-5 rounded-3xl border-2 border-violet-300/50 border-dashed bg-violet-100 shadow-inner">
@@ -212,12 +217,13 @@ export default function CartDrawer({
 
               <OrderSummary 
                 cart={cart} 
-                method={method} 
+                method={null} 
                 subtotal={subtotal} 
-                finalTotal={finalTotal} 
-                onSwitchToToggle={handleToggleMethod}
+                finalTotal={subtotal} 
                 onIncrement={onIncrement}
                 onDecrement={onDecrement}
+                onUpdateQuantity={onUpdateQuantity}
+                onRemove={onRemove}
               />
 
               <div className="grid grid-cols-1 gap-3">
@@ -250,6 +256,8 @@ export default function CartDrawer({
                 onIncrement={onIncrement}
                 onDecrement={onDecrement}
                 onPaymentSuccess={() => setView("success")}
+                onUpdateQuantity={onUpdateQuantity}
+                onRemove={onRemove}
               />
             </Elements>
           )}

@@ -8,6 +8,8 @@ interface OrderSummaryProps {
   onSwitchToToggle?: () => void;
   onIncrement: (productId: number) => void;
   onDecrement: (productId: number) => void;
+  onUpdateQuantity: (productId: number, newQty: number) => void;
+  onRemove: (productId: number) => void;
 }
 
 export default function OrderSummary({ 
@@ -17,8 +19,12 @@ export default function OrderSummary({
   finalTotal, 
   onSwitchToToggle,
   onIncrement,
-  onDecrement
+  onDecrement,
+  onUpdateQuantity, 
+  onRemove,
 }: OrderSummaryProps) {
+
+
   return (
     <section className="pt-4 border-t border-stone-100">
       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-600 mb-4">
@@ -35,17 +41,33 @@ export default function OrderSummary({
 
     {/* CONTROLS & PRICE (Right Side Group) */}
     <div className="flex items-center gap-4">
-      {/* THE PILL - Now in the middle */}
+      {/* THE PILL  */}
       <div className="flex items-center bg-stone-100 rounded-full p-0.5 border border-stone-200">
-        <button 
+       
+       {/* DECREMENT */} 
+       <button 
           onClick={() => onDecrement(item.product.id)}
           className="w-7 h-7 flex items-center justify-center bg-white rounded-full text-stone-600 hover:text-violet-600 shadow-sm transition-all active:scale-90 font-bold"
         >
           −
         </button>
-        <span className="px-2 text-[11px] font-black text-stone-900 min-w-[20px] text-center">
-          {item.quantity}
-        </span>
+
+        {/* MANUAL INPUT */}
+         <input
+            type="number"
+            min="1"
+            step="1"
+            value={item.quantity}
+            onChange={(e) => {
+              const val = parseInt(e.target.value, 10);
+              onUpdateQuantity(item.product.id, isNaN(val) ? 1 : val);
+            }}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            className="w-10 text-center text-[11px] font-black text-stone-900 bg-transparent outline-none"
+          />
+
+
+        {/* INCREMENT */}
         <button 
           onClick={() => onIncrement(item.product.id)}
           className="w-7 h-7 flex items-center justify-center bg-white rounded-full text-stone-600 hover:text-violet-600 shadow-sm transition-all active:scale-90 font-bold"
@@ -53,6 +75,15 @@ export default function OrderSummary({
           +
         </button>
       </div>
+
+{/* DELETE BUTTON */}
+    <button
+      onClick={() => onRemove(item.product.id)}
+      className="text-red-500 hover:text-red-700 text-lg font-bold transition-all active:scale-90"
+      aria-label="Remove item"
+    >
+      🗑️
+    </button>
 
       {/* PRICE (Far Right) */}
       <span className="font-bold text-stone-900 text-sm min-w-[55px] text-right">

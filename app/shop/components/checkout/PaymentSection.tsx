@@ -12,6 +12,8 @@ interface PaymentSectionProps {
   onSwitchToToggle: () => void;
   onIncrement: (id: number) => void;
   onDecrement: (id: number) => void;
+  onUpdateQuantity: (id: number, newQty: number) => void;
+  onRemove: (id: number) => void;
   onPaymentSuccess: () => void; // New prop to trigger internal success view
 }
 
@@ -23,7 +25,9 @@ export default function PaymentSection({
   onSwitchToToggle,
   onIncrement,
   onDecrement,
-  onPaymentSuccess
+  onPaymentSuccess,
+  onUpdateQuantity, 
+  onRemove,
 }: PaymentSectionProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -128,6 +132,8 @@ export default function PaymentSection({
         onSwitchToToggle={onSwitchToToggle}
         onIncrement={onIncrement}
         onDecrement={onDecrement}
+        onUpdateQuantity={onUpdateQuantity}
+        onRemove={onRemove}
       />
 
       <div className="space-y-6">
