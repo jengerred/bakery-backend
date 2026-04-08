@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lxkjPZMQX1o=",
+  "dgSpecHash": "spR+ItBD8Xs=",
   "success": true,
-  "projectFilePath": "C:\\Users\\jenge\\bakery-pos\\app\\backend\\BakeryBackend\\BakeryBackend.csproj",
+  "projectFilePath": "C:\\Users\\jenge\\bakery-backend\\BakeryBackend\\BakeryBackend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jenge\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\jenge\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.7\\microsoft.aspnetcore.openapi.9.0.7.nupkg.sha512",
