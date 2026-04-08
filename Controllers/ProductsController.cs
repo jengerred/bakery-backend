@@ -16,6 +16,12 @@ namespace BakeryBackend.Controllers
             _context = context;
         }
 
+
+        // ---------------------------------------------------------
+        // CRUD endpoints for products
+        // ---------------------------------------------------------
+
+
         // GET: api/products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
