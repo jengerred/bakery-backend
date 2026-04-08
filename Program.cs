@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 // SERVICES
 // ---------------------------------------------------------
 
-// ✔ .NET 8 Swagger (replaces AddOpenApi)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -17,24 +16,39 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
     });
 
-// ✔ Database
 builder.Services.AddDbContext<BakeryContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// ✔ CORS POLICY
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
 var app = builder.Build();
+
+// ---------------------------------------------------------
+// GLOBAL EXCEPTION LOGGING (must be FIRST in pipeline)
+// ---------------------------------------------------------
+
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("🔥 UNHANDLED EXCEPTION:");
+        Console.WriteLine(ex.ToString());
+        throw;
+    }
+});
 
 // ---------------------------------------------------------
 // MIDDLEWARE PIPELINE
@@ -42,14 +56,12 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    // ✔ .NET 8 Swagger UI (replaces MapOpenApi)
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-// ✔ Apply CORS before controllers
 app.UseCors("AllowAll");
 
 app.MapControllers();
