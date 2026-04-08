@@ -1,7 +1,14 @@
 using BakeryBackend.Data;
 using Microsoft.EntityFrameworkCore;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
+Console.WriteLine("🚀 Application built successfully. Starting middleware pipeline...");
+
+
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // ---------------------------------------------------------
 // SERVICES
@@ -9,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -32,6 +40,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+
+
 // ---------------------------------------------------------
 // GLOBAL EXCEPTION LOGGING (must be FIRST in pipeline)
 // ---------------------------------------------------------
@@ -50,6 +60,7 @@ app.Use(async (context, next) =>
     }
 });
 
+
 // ---------------------------------------------------------
 // MIDDLEWARE PIPELINE
 // ---------------------------------------------------------
@@ -66,4 +77,7 @@ app.UseCors("AllowAll");
 
 app.MapControllers();
 
+Console.WriteLine("🚀 About to run the application...");
 app.Run();
+
+Console.WriteLine("❌ app.Run() exited unexpectedly.");
