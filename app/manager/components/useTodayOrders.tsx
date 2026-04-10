@@ -1,28 +1,27 @@
 "use client";
 
 /* -------------------------------------------------------
-   🧠 Order History Context
-   Provides access to all completed orders recorded by the POS.
+   🧠 Shared Order History Context
+   Used by POS, Manager, and Shop.
+   Now backend-powered.
 ------------------------------------------------------- */
-import { useOrderHistoryContext } from "../../pos/context/OrderHistoryContext";
-import type { CompletedOrder } from "../../pos/context/OrderHistoryContext";
+import { useOrderHistoryContext } from "@/app/pos/context/OrderHistoryContext";
+import type { CompletedOrder } from "@/app/pos/context/OrderHistoryContext";
 
 /* -------------------------------------------------------
    🎯 useTodayOrders
-   A small helper hook that:
-   - Filters order history to *today only*
-   - Computes key sales metrics
-   - Computes payment breakdown (cash vs card)
-   - Returns everything in a clean, reusable structure
-
-   This keeps the ManagerDashboard page tiny and declarative.
+   Computes:
+   - Today's orders
+   - Total sales
+   - Order count
+   - Average order value
+   - Cash vs card breakdown
 ------------------------------------------------------- */
 export function useTodayOrders() {
   const { orderHistory } = useOrderHistoryContext();
 
   /* -------------------------------------------------------
      📅 Filter orders for *today only*
-     (Matches day, month, and year)
   ------------------------------------------------------- */
   const today = new Date();
   const todayOrders: CompletedOrder[] = orderHistory.filter((order) => {
@@ -36,9 +35,6 @@ export function useTodayOrders() {
 
   /* -------------------------------------------------------
      💵 Sales Metrics
-     - Total sales
-     - Order count
-     - Average order value
   ------------------------------------------------------- */
   const totalSales = todayOrders.reduce((sum, o) => sum + o.total, 0);
   const totalOrders = todayOrders.length;
@@ -46,8 +42,6 @@ export function useTodayOrders() {
 
   /* -------------------------------------------------------
      💳 Payment Breakdown
-     - Cash sales
-     - Card sales (credit + debit)
   ------------------------------------------------------- */
   const cashSales = todayOrders
     .filter((o) => o.paymentType === "cash")
@@ -58,8 +52,7 @@ export function useTodayOrders() {
     .reduce((sum, o) => sum + o.total, 0);
 
   /* -------------------------------------------------------
-     📦 Return all computed values
-     This keeps the dashboard page extremely clean.
+     📦 Return computed values
   ------------------------------------------------------- */
   return {
     todayOrders,

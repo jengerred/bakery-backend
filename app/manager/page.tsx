@@ -10,14 +10,13 @@ import PaymentBreakdown from "./components/PaymentBreakdown";
 import RecentOrders from "./components/RecentOrders";
 
 /* -------------------------------------------------------
-   🎯 useTodayOrders
-   Custom hook that:
-   - Filters today's orders
-   - Computes sales metrics
-   - Computes payment breakdown
-   Keeps the page tiny and declarative.
+   🎯 useManagerDashboard
+   Loads ALL orders from backend, then computes:
+   - Today's orders
+   - Sales metrics
+   - Payment breakdown
 ------------------------------------------------------- */
-import { useTodayOrders } from "./components/useTodayOrders";
+import { useManagerDashboard } from "./components/useManagerDashboard";
 
 /* -------------------------------------------------------
    📊 ManagerDashboard (clean + tiny)
@@ -32,7 +31,7 @@ export default function ManagerDashboard() {
     avgOrderValue,
     cashSales,
     cardSales,
-  } = useTodayOrders();
+  } = useManagerDashboard();
 
   return (
     <div className="p-6 space-y-6">
