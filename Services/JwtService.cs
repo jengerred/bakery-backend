@@ -17,10 +17,10 @@ namespace BakeryBackend.Services
 
         public JwtService(IConfiguration config)
         {
-            _secret = config["Jwt:Key"];
-            _issuer = config["Jwt:Issuer"];
-            _audience = config["Jwt:Audience"];
-            _expiresInMinutes = int.Parse(config["Jwt:ExpiresInMinutes"]);
+               _secret = config["Jwt:Key"]!;
+                _issuer = config["Jwt:Issuer"]!;
+                _audience = config["Jwt:Audience"]!;
+                _expiresInMinutes = int.Parse(config["Jwt:ExpiresInMinutes"]!);
         }
 
         public string GenerateToken(Profile user)

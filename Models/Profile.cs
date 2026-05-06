@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BakeryBackend.Models
 {
@@ -34,9 +35,10 @@ namespace BakeryBackend.Models
         public string Role { get; set; } = "customer";
 
         [Column("pinHash")]
-        public string? PinHash { get; set;
+        public string? PinHash { get; set; }
 
+        [Column("employeeId")]
+        public string? EmployeeId { get; set; }
 
     }
-}
 }

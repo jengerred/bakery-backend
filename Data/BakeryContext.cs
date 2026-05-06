@@ -13,22 +13,23 @@ namespace BakeryBackend.Data
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
-
         public DbSet<Profile> Profiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var jsonOptions = new JsonSerializerOptions 
+            { 
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+            };
 
-            // 1. Converter: List<OrderItem> <-> JSON String
+            // JSONB converter for Order.Items
             var itemsConverter = new ValueConverter<List<OrderItem>, string>(
                 v => JsonSerializer.Serialize(v, jsonOptions),
                 v => JsonSerializer.Deserialize<List<OrderItem>>(v, jsonOptions) ?? new List<OrderItem>()
             );
 
-            // 2. Comparer: Needed so EF knows if the list inside the JSON changed
             var itemsComparer = new ValueComparer<List<OrderItem>>(
                 (c1, c2) => JsonSerializer.Serialize(c1, jsonOptions) == JsonSerializer.Serialize(c2, jsonOptions),
                 c => c == null ? 0 : JsonSerializer.Serialize(c, jsonOptions).GetHashCode(),
@@ -36,13 +37,12 @@ namespace BakeryBackend.Data
             );
 
             /* -------------------------------------------------
-               ORDER ENTITY MAPPING (Matches Capitalized "Orders")
+               ORDER ENTITY MAPPING
                ------------------------------------------------- */
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.ToTable("Orders"); // Matches Supabase casing
+                entity.ToTable("Orders");
 
-                /* All table column names must match Supabase casing. */
                 entity.HasKey(o => o.Id);
                 entity.Property(o => o.Id).HasColumnName("id");
 
@@ -50,7 +50,7 @@ namespace BakeryBackend.Data
                     .HasColumnName("items")
                     .HasColumnType("jsonb")
                     .HasConversion(itemsConverter)
-                    .Metadata.SetValueComparer(itemsComparer); 
+                    .Metadata.SetValueComparer(itemsComparer);
 
                 entity.Property(o => o.Subtotal).HasColumnName("subtotal");
                 entity.Property(o => o.Tax).HasColumnName("tax");
@@ -76,13 +76,12 @@ namespace BakeryBackend.Data
             });
 
             /* -------------------------------------------------
-               PRODUCT ENTITY MAPPING (Matches Capitalized "Products")
+               PRODUCT ENTITY MAPPING
                ------------------------------------------------- */
             modelBuilder.Entity<Product>(entity =>
             {
-                entity.ToTable("Products"); // Matches Supabase casing
-                
-                /* All table column names must match Supabase casing. */
+                entity.ToTable("Products");
+
                 entity.Property(p => p.Id).HasColumnName("Id");
                 entity.Property(p => p.Name).HasColumnName("Name");
                 entity.Property(p => p.Price).HasColumnName("Price");
@@ -92,11 +91,11 @@ namespace BakeryBackend.Data
             });
 
             /* -------------------------------------------------
-            PROFILE ENTITY MAPPING 
-            ------------------------------------------------- */
+               PROFILE ENTITY MAPPING
+               ------------------------------------------------- */
             modelBuilder.Entity<Profile>(entity =>
             {
-                entity.ToTable("Profiles"); // Matches Supabase casing
+                entity.ToTable("Profiles");
 
                 entity.HasKey(p => p.Id);
                 entity.Property(p => p.Id).HasColumnName("id");
@@ -104,6 +103,10 @@ namespace BakeryBackend.Data
                 entity.Property(p => p.Name).HasColumnName("name");
                 entity.Property(p => p.Phone).HasColumnName("phone");
                 entity.Property(p => p.LoyaltyPoints).HasColumnName("loyalty_points");
+                entity.Property(p => p.EmployeeId).HasColumnName("employeeId");
+                entity.Property(p => p.PinHash).HasColumnName("pinHash");
+                // Role column (employee, manager, admin, customer)
+                entity.Property(p => p.Role).HasColumnName("role");
             });
         }
     }

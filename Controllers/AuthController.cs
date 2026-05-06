@@ -22,7 +22,7 @@ namespace BakeryBackend.Controllers
         }
 
         // ---------------------------------------------------------
-        // EMPLOYEE LOGIN (EmployeeID + PIN)
+        // EMPLOYEE LOGIN (employeeId + PIN)
         // ---------------------------------------------------------
         [HttpPost("pin-login")]
         public async Task<IActionResult> PinLogin([FromBody] PinLoginRequest request)
@@ -30,13 +30,17 @@ namespace BakeryBackend.Controllers
             if (string.IsNullOrWhiteSpace(request.EmployeeId) || string.IsNullOrWhiteSpace(request.Pin))
                 return BadRequest(new { error = "Employee ID and PIN required" });
 
-            // Find employee by last 4 of UUID
+            // Find employee by REAL employeeId column
             var user = await _context.Profiles
-                .Where(u => u.PinHash != null && u.Role != "customer")
-                .FirstOrDefaultAsync(u => u.Id.ToString().EndsWith(request.EmployeeId));
+                .Where(u => u.EmployeeId == request.EmployeeId && u.Role != "customer")
+                .FirstOrDefaultAsync();
 
             if (user == null)
                 return Unauthorized(new { error = "Employee not found" });
+
+            // Check null before verifying pin
+            if (string.IsNullOrEmpty(user.PinHash))
+            return Unauthorized(new { error = "PIN not set for this employee" });
 
             // Verify PIN
             if (!PinHasher.VerifyPin(request.Pin, user.PinHash))
@@ -50,8 +54,8 @@ namespace BakeryBackend.Controllers
                 id = user.Id,
                 name = user.Name,
                 role = user.Role,
-                employeeId = request.EmployeeId,
-                token = token
+                employeeId = user.EmployeeId,  
+                token
             });
         }
 
@@ -77,7 +81,7 @@ namespace BakeryBackend.Controllers
                 id = user.Id,
                 name = user.Name,
                 role = user.Role,
-                employeeId = user.Id.ToString().Substring(user.Id.ToString().Length - 4)
+                employeeId = user.EmployeeId   
             });
         }
 
@@ -93,6 +97,14 @@ namespace BakeryBackend.Controllers
             if (user == null)
                 return NotFound(new { error = "User not found" });
 
+            // Validate PIN
+            if (string.IsNullOrWhiteSpace(request.Pin))
+                return BadRequest(new { error = "PIN is required" });
+
+            if (request.Pin.Length != 4)
+                return BadRequest(new { error = "PIN must be 4 digits" });
+
+            // Hash and save
             user.PinHash = PinHasher.HashPin(request.Pin);
 
             await _context.SaveChangesAsync();
@@ -106,7 +118,7 @@ namespace BakeryBackend.Controllers
     // ---------------------------------------------------------
     public class PinLoginRequest
     {
-        public string? EmployeeId { get; set; }   // last 4 of UUID
+        public string? EmployeeId { get; set; }   // REAL employeeId
         public string? Pin { get; set; }
     }
 
