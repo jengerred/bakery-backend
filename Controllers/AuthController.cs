@@ -5,6 +5,7 @@ using BakeryBackend.Data;          // DbContext
 using BakeryBackend.Models;        // Profile model
 using BakeryBackend.Utils;         // PinHasher
 using BakeryBackend.Services;      // JwtService
+using BakeryBackend.Dtos;
 
 namespace BakeryBackend.Controllers
 {
@@ -111,7 +112,35 @@ namespace BakeryBackend.Controllers
 
             return Ok(new { success = true });
         }
+
+
+       // ---------------------------------------------------------
+        // CHANGE PIN (Manager/Admin Only)
+        // ---------------------------------------------------------
+        [Authorize(Roles = "manager,admin")]
+        [HttpPost("change-pin")]
+        public async Task<IActionResult> ChangePin([FromBody] ChangePinDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.EmployeeId) || string.IsNullOrEmpty(dto.NewPin))
+                return BadRequest(new { error = "EmployeeId and NewPin are required." });
+
+            var profile = await _context.Profiles
+                .FirstOrDefaultAsync(p => p.EmployeeId == dto.EmployeeId);
+
+            if (profile == null)
+                return NotFound(new { error = "Employee not found." });
+
+            if (dto.NewPin.Length != 4)
+                return BadRequest(new { error = "PIN must be 4 digits" });
+
+            profile.PinHash = PinHasher.HashPin(dto.NewPin);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "PIN updated successfully." });
+        }
     }
+    
 
     // ---------------------------------------------------------
     // REQUEST MODELS
